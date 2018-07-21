@@ -1,5 +1,6 @@
 package ru.cs.eatright.nlp;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -13,15 +14,20 @@ import edu.stanford.nlp.pipeline.Annotator;
 
 public class RusPosAnnotator implements Annotator {
 
-    private final RuleBasedPosTagger tagger = new RuleBasedPosTagger();
+    // private final RuleBasedPosTagger tagger = new RuleBasedPosTagger();
+    private final BasedOnMystemPosTagger tagger = new BasedOnMystemPosTagger();
 
     @Override
     public void annotate(Annotation annotation) {
         List<CoreLabel> list = annotation.get(TokensAnnotation.class);
-        for (CoreLabel token : list) {
-            String textToken = token.get(TextAnnotation.class);
-            RuleBasedPosTagger.PosTag tag = tagger.posTag(textToken);
-            token.set(CoreAnnotations.PartOfSpeechAnnotation.class, tag.getPennTag());
+        List<String> posTags = tagger.posTag(annotation.get(TextAnnotation.class));
+        for (int i = 0; i < list.size(); i++) {
+            CoreLabel token = list.get(i);
+            String posTag = posTags.get(i);
+            // String textToken = token.get(TextAnnotation.class);
+            // RuleBasedPosTagger.PosTag tag = tagger.posTag(textToken);
+            // token.set(CoreAnnotations.PartOfSpeechAnnotation.class, tag.getPennTag());
+            token.set(CoreAnnotations.PartOfSpeechAnnotation.class, posTag);
         }
     }
 
